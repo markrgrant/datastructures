@@ -3,25 +3,25 @@
 -- invariants maintained are:
 -- 1. Symmetric order - inorder traversal yields keys in ascending order
 -- 2. Perfect balance - every path from root to empty leaf has same length
-module Node23 (
+module Tree23 (
     empty,
     search,
     insert
 ) where
 
 
-data Node23 a = Empty |
-                Node2 a   (Node23 a) (Node23 a) |
-                Node3 a a (Node23 a) (Node23 a) (Node23 a) |
-                Node4 a a a (Node23 a) (Node23 a) (Node23 a) (Node23 a) 
+data Tree23 a = Empty |
+                Node2 a   (Tree23 a) (Tree23 a) |
+                Node3 a a (Tree23 a) (Tree23 a) (Tree23 a) |
+                Node4 a a a (Tree23 a) (Tree23 a) (Tree23 a) (Tree23 a) 
                 deriving (Eq, Show)
 
 
-empty :: (Ord a) => Node23 a
+empty :: (Ord a) => Tree23 a
 empty = Empty
 
 
-search :: (Ord a) => Node23 a -> a -> Maybe a
+search :: (Ord a) => Tree23 a -> a -> Maybe a
 search Empty _ = Nothing
 search (Node2 k l r) x
     | x < k     = search l x
@@ -37,7 +37,7 @@ search (Node3 k1 k2 l m r) x
 
 -- Insert a key into the tree.  We need to handle the case of a 4-node
 -- root that is turned into a 2-node with two 2-node children.
-insert :: Ord a => Node23 a -> a -> Node23 a
+insert :: Ord a => Tree23 a -> a -> Tree23 a
 insert tree x = 
     case root of
         Node4 k1 k2 k3 l m1 m2 r -> Node2 k2 (Node2 k1 l m1) (Node2 k3 m2 r)
@@ -73,7 +73,7 @@ insert' n@(Node3 k1 k2 l m r) x
 -- If a child is a 4-node, address this by pushing its middle node up
 -- into this node.  This may result in the parent node becoming a 4-node
 -- itself.
-check4Node :: Ord a => Node23 a -> Node23 a
+check4Node :: Ord a => Tree23 a -> Tree23 a
 -- 2-nodes become 3-nodes if they have a 4-node child.  Otherwise, no
 -- change.
 check4Node (Node2 k (Node4 y1 y2 y3 t1 t2 t3 t4) r) =
@@ -92,7 +92,7 @@ check4Node (Node3 k1 k2 l m (Node4 y1 y2 y3 t1 t2 t3 t4)) =
 check4Node n = n
 
 
-instance Functor Node23 where
+instance Functor Tree23 where
     fmap f Empty = Empty
     fmap f (Node2 x l r) = Node2 (f x) (fmap f l) (fmap f r)
     fmap f (Node3 x1 x2 l m r) = Node3 (f x1) (f x2) (fmap f l) (fmap f m) (fmap f r)
