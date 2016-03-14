@@ -1,7 +1,6 @@
 -- A basic implementation of 23 trees, which ensure a balanced search tree
 -- whose height is worst case ~lgN where N is the number of keys.  The
 -- invariants maintained are:
---
 -- 1. Symmetric order - inorder traversal yields keys in ascending order
 -- 2. Perfect balance - every path from root to empty leaf has same length
 module Node23 (

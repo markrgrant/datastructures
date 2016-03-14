@@ -1,3 +1,13 @@
+-- A basic Tree data structure supporting arbitrary numbers of subtrees.
+
+module Tree (
+    create,
+    addChild,
+    size,
+    height,
+    toList
+) where
+
 data Tree a = EmptyTree | Node a [Tree a] deriving (Show)
 
 create :: Tree a

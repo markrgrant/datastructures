@@ -1,4 +1,12 @@
--- a binary search tree
+module BSTree (
+    isEmpty,
+    insert,
+    isElem
+) where
+
+-- a (unbalanced) binary search tree implementation.   It will have poor
+-- worst case performance as tree height could be ~N where N is the number
+-- of keys in the tree.
 data BSTree a =
     EmptyTree | Node a (BSTree a) (BSTree a)
     deriving (Show, Read, Eq)
