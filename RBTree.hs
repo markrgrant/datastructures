@@ -2,14 +2,21 @@
 -- This is an alternative to the 2-3 tree data structure for providing
 -- a balanced binary search tree.   The performance guarantees are the same,
 -- but I was just curious to see how a Haskell implementation might differ.
+-- The invariants are:
+-- 1. Red links lean left
+-- 2. No node has two red links connected to it
+-- 3. The tree has perfect black balance: every path from the root to a null
+--    link has the same number of black links.
 --
 -- The number of lines of code for insertion is about 1/2 that required for
 -- the 2-3 tree implementation.
 --
 module RBTree (
+    RBTree,
     empty,
     search,
-    insert
+    insert,
+    isRedBlack
 ) where
 
 
@@ -66,3 +73,18 @@ flipColors :: RBTree a -> RBTree a
 flipColors (Node k1 (Node k2 t1 t2 Red) (Node k3 t3 t4 Red) c) = 
     Node k1 (Node k2 t1 t2 Black) (Node k3 t3 t4 Black) Red
 flipColors n = n
+
+
+isRedBlack :: RBTree a -> Bool
+isRedBlack (Node _ l r _) = 
+    blackDepth l == blackDepth r && isRedBlack' l && isRedBlack' r
+    where isRedBlack' Empty = True
+          isRedBlack' (Node _ _ (Node _ _ _ Red) _) = False
+          isRedBlack' (Node _ (Node _ _ _ Red) _ Red) = False
+          isRedBlack' (Node _ l r _) = isRedBlack' l && isRedBlack' r
+
+
+blackDepth :: RBTree a -> Int
+blackDepth Empty = 1  -- nulls are considered black
+blackDepth (Node _ l r Black) = maximum [blackDepth l, blackDepth r] + 1
+blackDepth (Node _ l r Red) = maximum [blackDepth l, blackDepth r]

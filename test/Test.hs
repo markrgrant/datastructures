@@ -1,12 +1,21 @@
 import Test.QuickCheck
 
+import RBTree
 
 
+instance (Ord a, Arbitrary a) => Arbitrary (RBTree a) where
+    arbitrary = do
+        n <- choose (1,2) :: Gen Int
+        case n of
+            1 -> return empty
+            2 -> do
+                x <- arbitrary
+                y <- arbitrary
+                return $ insert x y
 
-prop_revapp :: [Int] -> [Int] -> Bool
-prop_revapp xs ys = reverse (xs++ys) == reverse xs ++ reverse ys
+
+propInsert :: RBTree Int  -> Int -> Bool
+propInsert tree key = isRedBlack tree && isRedBlack (insert tree key)
 
 
-
-
-main = quickCheck prop_revapp
+main = quickCheck propInsert
