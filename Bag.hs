@@ -9,15 +9,16 @@ module Bag where
 
 data Bag a = Bag [a] Int
 
-add :: Bag -> a -> Bag
-add (Bag xs sz) item = Bag (x:xs) (sz + 1)
+
+add :: Bag a -> a -> Bag a
+add (Bag xs sz) item = Bag (item:xs) (sz + 1)
     
 
-isEmpty :: Bag -> Bool
+isEmpty :: Bag a -> Bool
 isEmpty bag = size bag == 0
 
 
-size :: Bag -> Int
+size :: Bag a -> Int
 size (Bag _ sz) = sz
 
 

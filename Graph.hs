@@ -14,10 +14,7 @@ type Context a b = (Adj b, Node, a, Adj b)
 
 
 
-data Graph a b = Empty | Context a b & Graph a b
-
-data (&) :: 
-
+data Graph a b = Empty | Context a b (Graph a b)
 
 
 -- helper methods
@@ -27,14 +24,12 @@ isEmpty _ = False
 
 -- get a list of nodes not yet in the graph, where i is
 -- the number of nodes desired
-newNodes = Int -> Graph a b -> [Node]
+newNodes :: Int -> Graph a b -> [Node]
 newNodes i g = [n+1..n+i] where n = foldr max 0 (nodes g)
 
 gmap :: (Context a b -> Context c d) -> Graph a b -> Graph c d
 gmap f Empty = Empty
-gmap f (c & g) = f c & gmap f g
+gmap f (Context x y g) = f (c (gmap f g)
 
 grev :: Graph a b -> Graph a b
 grev gmap swap where swap (p, v, l, s) = (s, v, l, p)
-
-
