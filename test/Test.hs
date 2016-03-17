@@ -1,21 +1,29 @@
+{-# LANGUAGE TemplateHaskell #-}
+
 import Test.QuickCheck
 
-import RBTree
+import qualified RBTree as RB
+import qualified PQ as PQ
 
 
-instance (Ord a, Arbitrary a) => Arbitrary (RBTree a) where
+instance (Ord a, Arbitrary a) => Arbitrary (RB.RBTree a) where
     arbitrary = do
         n <- choose (1,2) :: Gen Int
         case n of
-            1 -> return empty
+            1 -> return RB.empty
             2 -> do
                 x <- arbitrary
                 y <- arbitrary
-                return $ insert x y
+                return $ RB.insert x y
 
 
-propInsert :: RBTree Int  -> Int -> Bool
-propInsert tree key = isRedBlack tree && isRedBlack (insert tree key)
+-- Insertion into a red-black tree results in a red-black tree
+prop_insert :: RB.RBTree Int  -> Int -> Bool
+prop_insert tree key = RB.isRedBlack tree && RB.isRedBlack (RB.insert tree key)
 
 
-main = quickCheck propInsert
+-- return []
+
+
+main :: IO Bool
+main = $quickCheckAll
