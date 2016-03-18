@@ -76,6 +76,7 @@ flipColors n = n
 
 
 isRedBlack :: RBTree a -> Bool
+isRedBlack Empty = True
 isRedBlack (Node _ l r _) = 
     blackDepth l == blackDepth r && isRedBlack' l && isRedBlack' r
     where isRedBlack' Empty = True
