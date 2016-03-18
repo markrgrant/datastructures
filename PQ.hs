@@ -2,6 +2,7 @@
 -- performance for insert and delete, and O(1) performance for max.
 --
 module PQ (
+    PQ,
     empty,    -- O(1)
     fromList, -- O(N)
     insert,   -- O(lgN)
@@ -17,7 +18,7 @@ import Data.List (foldl')
 import qualified Data.Vector as V
 
 
-data PQ a = PQ (V.Vector a) Int deriving (Show)
+data PQ a = PQ (V.Vector a) Int deriving (Eq, Show)
 
 
 -- Create an empty priority queue
@@ -51,9 +52,13 @@ max (PQ vec size)
 
 -- Retrieve the key with the highest priority, removing it from the priority
 -- queue.
-delMax :: PQ a -> Maybe (PQ a, a)
-delMax = undefined
-
+delMax :: (Ord a) => PQ a -> Maybe (PQ a, a)
+delMax (PQ v s)
+    | s == 0 = Nothing
+    | otherwise = let max = v V.! 0
+                      v' = swap v 0 (s-1)
+                  in Just (PQ (sink v' 0 (s-1)) (s-1), max)
+               
 
 -- Returns True if the priority queue has no keys, False otherwise.
 isEmpty :: PQ a -> Bool
@@ -75,18 +80,28 @@ swim v i
     | otherwise = swim (swap v i (parent i)) (parent i)
 
 
+sink :: (Ord a) => V.Vector a -> Int -> Int -> V.Vector a
+sink v i s
+    | right i > s-1 = v  -- cannot sink any further
+    | v V.! i >= v V.! ci = v  -- done sinking
+    | otherwise = sink (swap v i ci) ci s
+    where ci = maxchild v i
+
+
 swap :: V.Vector a -> Int -> Int-> V.Vector a
 swap v i j = let vi = v V.! i
                  vj = v V.! j
              in v V.// [(i,vj),(j, vi)]
 
 
-sink :: Int -> Int
-sink = undefined
-
-
 parent :: Int -> Int
 parent i = (i-1) `div` 2
+
+
+maxchild :: (Ord a) => V.Vector a -> Int -> Int
+maxchild v i = if (v V.! (left i)) > (v V.! (right i))
+                   then (left i)
+                   else (right i)
 
 
 left :: Int -> Int
