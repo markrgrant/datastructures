@@ -16,7 +16,7 @@ extra-source-files:  README
 cabal-version:       >=1.10
 
 library
-  exposed-modules:     Tree, Seq, BSTree, Bag, RBTree, Tree23, Stack, PQ
+  exposed-modules:     Tree, Seq, BSTree, Bag, RBTree, Tree23, Stack, PQ, Graph
   -- other-modules:       
   -- other-extensions:    
   build-depends:       base >=4.7 && <4.8, vector

@@ -1,35 +1,53 @@
--- from http://web.engr.oregonstate.edu/~erwig/papers/InductiveGraphs_JFP01.pdf
+-- an undirected multigraph implementation
+module Graph (
+    Graph,
+    create,
+    fromList,
+    addEdge,  -- insert an edge between the given vertices
+    adj,
+    numVertices,
+    numEdges
+) where
 
--- nodes are represented by distinct integers
-type Node = Int
-
--- a type representing an adjacent edge (either an incoming and outgoing
--- edges of a given Node)
-type Adj b = [(b, Node)]
-
--- a context is a tuple consisting of the incoming adjacent edges,
--- the node itself, a value stored at the node, and the outgoing
--- adjacent edges
-type Context a b = (Adj b, Node, a, Adj b)
-
-
-
-data Graph a b = Empty | Context a b (Graph a b)
+import Data.List (foldl')
+import qualified Data.Vector as V
 
 
--- helper methods
-isEmpty :: Graph -> Bool
-isEmpty Empty = True
-isEmpty _ = False
+-- adjacency list represetation
+data Graph = Graph (V.Vector [Int]) deriving (Show)
 
--- get a list of nodes not yet in the graph, where i is
--- the number of nodes desired
-newNodes :: Int -> Graph a b -> [Node]
-newNodes i g = [n+1..n+i] where n = foldr max 0 (nodes g)
 
-gmap :: (Context a b -> Context c d) -> Graph a b -> Graph c d
-gmap f Empty = Empty
-gmap f (Context x y g) = f (c (gmap f g)
+-- create a graph with n vertices and no edges
+create :: Int -> Graph
+create n = Graph $ V.replicate n []
 
-grev :: Graph a b -> Graph a b
-grev gmap swap where swap (p, v, l, s) = (s, v, l, p)
+
+-- create a new graph of the given size from an edge list where n
+-- is the number of vertices and edges is a list of edges between the
+-- vertices
+fromList :: Int -> [(Int, Int)] -> Graph 
+fromList n edges = 
+    foldl' (\g (x,y) -> addEdge g x y) (create n) edges
+
+
+-- Add an edge between vertices i and j
+addEdge :: Graph -> Int -> Int -> Graph
+addEdge (Graph v) i j = Graph $ v V.// [(i, (j:jedges)), (j, (i:iedges))]
+    where iedges = v V.! i
+          jedges = v V.! j
+
+
+-- get the vertices adjacent to vertex i
+adj :: Graph -> Int -> [Int]
+adj (Graph v) i = v V.! i
+
+
+-- the total number of vertices in the graph
+numVertices :: Graph -> Int
+numVertices (Graph v) = V.length v
+
+
+-- the total number of edges in the graph
+numEdges :: Graph -> Int
+numEdges (Graph v) = V.foldl' (\acc lst -> acc + length lst) 0 v
+
