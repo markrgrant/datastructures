@@ -6,6 +6,8 @@ import Data.Maybe (fromJust, Maybe(..))
 
 import qualified RBTree as RB
 import qualified PQ as PQ
+import qualified Graph as G
+import Data.List (foldl')
 
 
 instance (Ord a, Arbitrary a) => Arbitrary (RB.RBTree a) where
@@ -28,6 +30,20 @@ instance (Ord a, Arbitrary a) => Arbitrary (PQ.PQ a) where
                 x <- arbitrary
                 y <- arbitrary
                 return $ PQ.insert x y
+
+
+instance Arbitrary G.Graph where
+    arbitrary = do
+        n <- choose (1,2) :: Gen Int
+        case n of
+            1 -> do -- create a graph
+                numEdges <- choose (0, 100)
+                return $ G.create numEdges
+            2 -> do -- add an edge to a graph
+                g <- arbitrary
+                fr <- choose (0, (G.numVertices g) - 1)
+                to <- choose (0, (G.numVertices g) - 1)
+                return $ G.addEdge g fr to
 
 
 -- Insertion into a red-black tree results in a red-black tree
