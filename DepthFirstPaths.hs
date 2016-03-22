@@ -2,7 +2,7 @@
 -- in a Graph.   To use: 
 --
 -- > import qualified Graph as G
--- > import qualified Paths as P
+-- > import qualified DepthFirstPaths as P
 --
 -- > let g = G.fromList 10 [(0,1),(0,2),(2,3),(4,7),(2,8)]
 -- > let paths = P.create g 0
@@ -11,7 +11,7 @@
 -- > P.pathTo 8
 -- [0,2,8]
 
-module Paths (
+module DepthFirstPaths (
     create,
     hasPathTo,
     pathTo

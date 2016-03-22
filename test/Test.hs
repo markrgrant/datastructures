@@ -7,6 +7,8 @@ import Data.Maybe (fromJust, Maybe(..))
 import qualified RBTree as RB
 import qualified PQ as PQ
 import qualified Graph as G
+import qualified DepthFirstPaths as DP
+
 import Data.List (foldl')
 
 
@@ -46,6 +48,15 @@ instance Arbitrary G.Graph where
                 return $ G.addEdge g fr to
 
 
+-- Create an arbitrary Paths instance from an arbitrary Graph
+-- and an arbitrary vertex within that graph as the starting point.
+instance Arbitrary DP.Path where
+    arbitrary = do
+        graph <- arbitrary
+        vertex <- choose (0, (G.numVertices g) - 1)
+        return $ DP.create graph vertex
+
+
 -- Insertion into a red-black tree results in a red-black tree
 prop_rbtree_insert :: RB.RBTree Int  -> Int -> Bool
 prop_rbtree_insert tree key = RB.isRedBlack tree &&
@@ -82,6 +93,9 @@ prop_pq_insert :: PQ.PQ Int -> Int -> Bool
 prop_pq_insert q n = PQ.size (PQ.insert q n) == (PQ.size q) + 1
 
 
+
+
+-- necessary for quickCheckAll to function properly
 return []
 
 
