@@ -12,6 +12,7 @@
 -- [0,2,8]
 
 module DepthFirstPaths (
+    Paths,
     create,
     hasPathTo,
     pathTo
