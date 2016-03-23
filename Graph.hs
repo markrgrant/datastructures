@@ -1,4 +1,5 @@
--- an undirected multigraph implementation
+-- An undirected multigraph implementation.  Self edges and parallel edges
+-- are allowed.
 module Graph (
     Graph,
     create,
@@ -32,9 +33,11 @@ fromList n edges =
 
 -- Add an edge between vertices i and j.
 addEdge :: Graph -> Int -> Int -> Graph
-addEdge (Graph v) i j = Graph $ v V.// [(i, (j:jedges)), (j, (i:iedges))]
+addEdge (Graph v) i j = Graph v''
     where iedges = v V.! i
-          jedges = v V.! j
+          v' = v V.// [(i, j:iedges)]
+          jedges = v' V.! j
+          v'' = v' V.// [(j, i:jedges)]
 
 
 -- Get the vertices adjacent to vertex i.
@@ -49,4 +52,5 @@ numVertices (Graph v) = V.length v
 
 -- The total number of edges in the graph.
 numEdges :: Graph -> Int
-numEdges (Graph v) = V.foldl' (\acc lst -> acc + length lst) 0 v
+numEdges (Graph v) = doubleCount `div` 2
+    where doubleCount = V.foldl' (\acc lst -> acc + length lst) 0 v 
