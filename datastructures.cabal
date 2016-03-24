@@ -17,7 +17,7 @@ cabal-version:       >=1.10
 
 library
   exposed-modules:     Tree, Seq, BSTree, RBTree, Tree23, Stack, PQ,
-                       Graph, DepthFirstPaths, BreadthFirstPaths, CC
+                       Graph, DGraph, DepthFirstPaths, BreadthFirstPaths, CC
   -- other-modules:       
   -- other-extensions:    
   build-depends:       base >=4.7 && <4.8, vector
@@ -26,7 +26,7 @@ library
 
 test-suite           test-datastructures
   type:              exitcode-stdio-1.0
-  main-is:           Test.hs
+  main-is:           Main.hs
   hs-source-dirs:    test
   build-depends:     base >= 4.6 && < 4.8,
                      QuickCheck >= 2.8 && < 2.9,

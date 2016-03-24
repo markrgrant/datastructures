@@ -8,9 +8,9 @@ instance Arbitrary G.Graph where
     arbitrary = do
         n <- choose (1,2) :: Gen Int
         case n of
-            1 -> do -- create a graph
-                numEdges <- choose (0, 100)
-                return $ G.create numEdges
+            1 -> do -- create a graph with at least one vertex
+                numVertices <- choose (1, 100)
+                return $ G.create numVertices
             2 -> do -- add an edge to a graph
                 g <- arbitrary
                 fr <- choose (0, (G.numVertices g) - 1)
@@ -20,17 +20,14 @@ instance Arbitrary G.Graph where
 
 -- Adding an edge to a graph increases its edge count by 1
 prop_num_edges :: G.Graph -> Bool
-prop_num_edges g
-    | numVertices == 0 = True -- can't add any edges
-    | otherwise = G.numEdges g' == (G.numEdges g + 1)
-    where numVertices = G.numVertices g
-          g' = G.addEdge g 0 (numVertices-1)
+prop_num_edges g = G.numEdges g' == (G.numEdges g + 1)
+    where g' = G.addEdge g 0 ((G.numVertices g) - 1)
 
 
 -- The number of vertices is the same as the number provided when creating the
 -- graph
-prop_num_vertices :: Int -> Bool
-prop_num_vertices n = G.numVertices g == n
+prop_num_vertices :: NonNegative Int -> Bool
+prop_num_vertices (NonNegative n) = G.numVertices g == n
     where g = G.create n
     
 
