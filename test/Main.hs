@@ -1,5 +1,3 @@
-{-# LANGUAGE TemplateHaskell #-}
-
 import Test.QuickCheck
 import System.Exit (exitSuccess, exitFailure)
 import Control.Monad.Error
