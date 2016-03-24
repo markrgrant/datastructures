@@ -27,8 +27,7 @@ create n = Graph $ V.replicate n []
 -- is the number of vertices and edges is a list of edges between the
 -- vertices.
 fromList :: Int -> [(Int, Int)] -> Graph 
-fromList n edges = 
-    foldl' (\g (x,y) -> addEdge g x y) (create n) edges
+fromList n = foldl' (\g (x,y) -> addEdge g x y) (create n)
 
 
 -- Add an edge between vertices i and j.

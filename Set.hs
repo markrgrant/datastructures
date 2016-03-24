@@ -10,7 +10,7 @@ import BSTree as BST
 
 newtype Set a = Set (BSTree a)
 
-instance Functor (Set) where
+instance Functor Set where
     fmap f (Set (BSTree left x right)) =
         Set (BSTree (f x) (fmap f left) (fmap f right))
     

@@ -22,7 +22,7 @@ module DepthFirstPaths (
 import qualified Data.Vector as V
 import qualified Graph as G
 import Data.List (foldl')
-import Data.Maybe (fromJust)
+import Data.Maybe (fromJust, isJust)
 
 
 data Paths = Paths (V.Vector (Maybe Int))
@@ -33,14 +33,14 @@ data Paths = Paths (V.Vector (Maybe Int))
 -- the contents of a path between the vertex and any other vertex.
 create :: G.Graph -> Int -> Paths
 create graph root = Paths $ dfs graph root root tree
-    where tree = (V.replicate (G.numVertices graph) Nothing)
+    where tree = V.replicate (G.numVertices graph) Nothing
 
 
 dfs :: G.Graph -> Int -> Int -> V.Vector (Maybe Int) -> V.Vector (Maybe Int)
 dfs graph parent current tree
     | isVisited = tree  -- current already visited, return the tree
-    | otherwise = foldl' (\tree' child -> dfs graph current child tree') newTree children
-    where isVisited = (tree V.! current) /= Nothing
+    | otherwise = foldl' (flip (dfs graph current)) newTree children
+    where isVisited = isJust $ tree V.! current
           newTree = tree V.// [(current, Just parent)]
           children = G.adj graph current
            
@@ -52,7 +52,7 @@ dfs graph parent current tree
 -- depth-first search tree of the vertex.  The root vertex is considered
 -- connected having a path to itself.
 hasPathTo :: Paths -> Int -> Bool
-hasPathTo (Paths tree) v = tree V.! v /= Nothing
+hasPathTo (Paths tree) v = isJust $ tree V.! v 
 
 
 -- Find a path to the root vertex in time proportional to the

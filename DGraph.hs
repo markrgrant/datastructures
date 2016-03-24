@@ -26,13 +26,12 @@ create n = DGraph $ V.replicate n []
 -- is the number of vertices and edges is a list of edges between the
 -- vertices.
 fromList :: Int -> [(Int, Int)] -> DGraph 
-fromList n edges = 
-    foldl' (\g (x,y) -> addEdge g x y) (create n) edges
+fromList n = foldl' (\g (x,y) -> addEdge g x y) (create n)
 
 
 -- Add an edge from vertex i to vertex j
 addEdge :: DGraph -> Int -> Int -> DGraph
-addEdge (DGraph v) i j = DGraph $ v V.// [(i, (j:iedges))]
+addEdge (DGraph v) i j = DGraph $ v V.// [(i, j:iedges)]
     where iedges = v V.! i
 
 

@@ -28,7 +28,7 @@ empty = PQ V.empty 0
 
 -- Create a priority queue from a list of keys
 fromList :: (Ord a) => [a] -> PQ a
-fromList xs = foldl' (\pq x -> insert pq x) empty xs
+fromList = foldl' insert empty
 
 
 -- Insert a key into the priority queue, returning a priority queue that
@@ -76,7 +76,7 @@ size (PQ _ s) = s
 swim :: (Ord a) => V.Vector a -> Int -> V.Vector a
 swim v i
     | i <= 0 = v                                           -- done
-    | v V.! (parent i) >= v V.! i = v                    -- done 
+    | v V.! parent i >= v V.! i = v                    -- done 
     | otherwise = swim (swap v i (parent i)) (parent i)
 
 
@@ -99,9 +99,9 @@ parent i = (i-1) `div` 2
 
 
 maxchild :: (Ord a) => V.Vector a -> Int -> Int
-maxchild v i = if (v V.! (left i)) > (v V.! (right i))
-                   then (left i)
-                   else (right i)
+maxchild v i = if (v V.! left i) > (v V.! right i)
+                   then left i
+                   else right i
 
 
 left :: Int -> Int

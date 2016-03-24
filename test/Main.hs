@@ -15,8 +15,8 @@ quickCheckResultW :: (Testable prop) => prop -> QuickCheckMonad Result
 quickCheckResultW prop = do
     result <- liftIO $ quickCheckResult prop
     case result of
-        (Success _ _ _) -> return result
-        (Failure {reason=str}) -> throwError str
+        Success {} -> return result
+        Failure {reason=str} -> throwError str
 
 
 main :: IO ()

@@ -33,7 +33,7 @@ data Paths = Paths (V.Vector (Maybe Int))
 -- the contents of a path between the vertex and any other vertex.
 create :: G.Graph -> Int -> Paths
 create graph root = Paths $ bfs graph [root] tree'
-    where tree = (V.replicate (G.numVertices graph) Nothing)
+    where tree = V.replicate (G.numVertices graph) Nothing
           tree' = tree V.// [(root, Just root)]
 
 
@@ -41,13 +41,13 @@ create graph root = Paths $ bfs graph [root] tree'
 -- of visited vertices.
 bfs :: G.Graph -> [Int] -> V.Vector (Maybe Int) -> V.Vector (Maybe Int)
 bfs graph level tree
-    | level == [] = tree -- done constructing tree
+    | null level = tree -- done constructing tree
     | otherwise = bfs graph level' tree'
     where (level', tree') = foldl' visit ([], tree) level
           visit (l, t) v = (l', t')
-              where isUnvisited vert = (t V.! vert) == Nothing
+              where isUnvisited vert = isNothing (t V.! vert)
                     adj = filter isUnvisited (G.adj graph v)
-                    t' = t V.// (zip (repeat v) (map Just adj))
+                    t' = t V.// zip (repeat v) (map Just adj)
                     l' = adj ++ l
 
 
@@ -58,7 +58,7 @@ bfs graph level tree
 -- depth-first search tree of the vertex.  The root vertex is considered
 -- connected having a path to itself.
 hasPathTo :: Paths -> Int -> Bool
-hasPathTo (Paths tree) v = tree V.! v /= Nothing
+hasPathTo (Paths tree) v = isJust $ tree V.! v
 
 
 -- Find a path to the root vertex in time proportional to the

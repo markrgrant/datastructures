@@ -8,7 +8,7 @@ module CC (
 import Prelude hiding (id)
 import qualified Data.Vector as V
 import Data.List (foldl')
-import Data.Maybe (fromJust)
+import Data.Maybe (fromJust, isJust)
 
 import qualified Graph as G
 
@@ -19,7 +19,7 @@ data CC = CC (V.Vector Int) Int
 create :: G.Graph -> CC
 create graph = CC comps'' count'
     where count = 0
-          numVertices = (G.numVertices graph)
+          numVertices = G.numVertices graph
           comps = V.replicate numVertices Nothing
           (comps', count') = foldl' (findcc graph) (comps, count) [0..(numVertices-1)]
           comps'' = V.map fromJust comps' -- every vertex is in a component
@@ -33,7 +33,7 @@ create graph = CC comps'' count'
 -- same connected component and assign them to the component as well.
 findcc :: G.Graph -> (V.Vector (Maybe Int), Int) -> Int -> (V.Vector (Maybe Int), Int)
 findcc graph (comps, count) vertex
-    | comps V.! vertex /= Nothing = (comps, count) -- vertex already in a comp
+    | comps V.! isJust vertex = (comps, count) -- vertex already in a comp
     | otherwise = (comps', count') -- vertex not yet in a comp
     where count' = count+1
           comps' = dfs graph count comps vertex -- complete the component
@@ -42,10 +42,10 @@ findcc graph (comps, count) vertex
 -- perform dfs in order to flesh out the component:
 --   add the vertex to the component
 --   perform dfs on the adjacent vertices
-dfs :: G.Graph -> Int -> (V.Vector (Maybe Int)) -> Int -> (V.Vector (Maybe Int))
+dfs :: G.Graph -> Int -> V.Vector (Maybe Int) -> Int -> V.Vector (Maybe Int)
 dfs graph count comps vertex = foldl' (dfs graph count) comps' adj
     where comps' = comps V.// [(vertex, Just count)]
-          isUnvisited v = (comps V.! v) == Nothing
+          isUnvisited v = isNothing $ comps V.! v
           adj = filter isUnvisited (G.adj graph vertex)
 
 

@@ -3,7 +3,7 @@ module PQ.Test where
 import Test.QuickCheck
 import Data.Maybe (fromJust, Maybe(..))
 
-import qualified PQ as PQ
+import qualified PQ
 
 instance (Ord a, Arbitrary a) => Arbitrary (PQ.PQ a) where
     arbitrary = do
@@ -24,8 +24,8 @@ prop_pq_empty_size_0 = PQ.size PQ.empty == 0
 -- The maximum of a priority queue built from a list of values is the
 -- maximum of that list of values
 prop_pq_max :: [Int] -> Bool
-prop_pq_max xs = if length xs == 0
-                    then result == Nothing
+prop_pq_max xs = if null xs
+                    then isNothing result
                     else result == Just (maximum xs)
                     where result = PQ.max (PQ.fromList xs)
 
@@ -34,7 +34,7 @@ prop_pq_max xs = if length xs == 0
 -- in the queue and decreases its size by 1
 prop_pq_delmax :: [Int] -> Bool
 prop_pq_delmax xs 
-    | length xs == 0 = PQ.delMax (PQ.fromList xs) == Nothing
+    | null xs = isNothing $ PQ.delMax (PQ.fromList xs)
     | otherwise = max == maximum xs && PQ.size pq + 1 == length xs
                   where result = fromJust $ PQ.delMax (PQ.fromList xs)
                         max = snd result
@@ -43,4 +43,4 @@ prop_pq_delmax xs
 
 -- Insertion into a priority queue increases its size by 1
 prop_pq_insert :: PQ.PQ Int -> Int -> Bool
-prop_pq_insert q n = PQ.size (PQ.insert q n) == (PQ.size q) + 1
+prop_pq_insert q n = PQ.size (PQ.insert q n) == PQ.size q + 1
