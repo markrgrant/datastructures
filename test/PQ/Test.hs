@@ -1,7 +1,7 @@
 module PQ.Test where
 
 import Test.QuickCheck
-import Data.Maybe (fromJust, Maybe(..))
+import Data.Maybe (fromJust, Maybe(..), isNothing)
 
 import qualified PQ
 

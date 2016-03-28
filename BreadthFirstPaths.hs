@@ -22,7 +22,7 @@ module BreadthFirstPaths (
 import qualified Data.Vector as V
 import qualified Graph as G
 import Data.List (foldl')
-import Data.Maybe (fromJust)
+import Data.Maybe (fromJust, isNothing, isJust)
 
 
 data Paths = Paths (V.Vector (Maybe Int))

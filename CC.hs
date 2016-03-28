@@ -8,7 +8,7 @@ module CC (
 import Prelude hiding (id)
 import qualified Data.Vector as V
 import Data.List (foldl')
-import Data.Maybe (fromJust, isJust)
+import Data.Maybe (fromJust, isJust, isNothing)
 
 import qualified Graph as G
 
@@ -33,8 +33,8 @@ create graph = CC comps'' count'
 -- same connected component and assign them to the component as well.
 findcc :: G.Graph -> (V.Vector (Maybe Int), Int) -> Int -> (V.Vector (Maybe Int), Int)
 findcc graph (comps, count) vertex
-    | comps V.! isJust vertex = (comps, count) -- vertex already in a comp
-    | otherwise = (comps', count') -- vertex not yet in a comp
+    | isJust $ comps V.! vertex = (comps, count)   -- vertex already in a comp
+    | otherwise                 = (comps', count') -- vertex not yet in a comp
     where count' = count+1
           comps' = dfs graph count comps vertex -- complete the component
 
