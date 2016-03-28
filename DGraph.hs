@@ -2,19 +2,25 @@ module DGraph (
     DGraph,
     create,
     fromList,
+    toList,
     addEdge,
     adj,
     numVertices,
-    numEdges
+    numEdges,
+    reverse
 ) where
 
 
+import Prelude hiding (reverse)
 import Data.List (foldl')
 import qualified Data.Vector as V
 
 
 -- Adjacency list representation
-data DGraph = DGraph (V.Vector [Int]) deriving (Show)
+newtype DGraph = DGraph AdjList deriving (Show)
+
+
+type AdjList = V.Vector [Int]
 
 
 -- Create a graph with n vertices and no edges.
@@ -27,6 +33,19 @@ create n = DGraph $ V.replicate n []
 -- vertices.
 fromList :: Int -> [(Int, Int)] -> DGraph 
 fromList n = foldl' (\g (x,y) -> addEdge g x y) (create n)
+
+
+-- Return the adjacency list representation of the directed graph
+-- as a list of tuples where the left hand side of the tuple is the source
+-- vertex and the right hand side is the destination
+toList :: DGraph -> [(Int, Int)]
+toList (DGraph v) =  toList' v (V.length v - 1) []
+
+
+toList' v (-1) xs = xs
+toList' v i    xs = toList' v (i-1) xs' 
+    where edges = v V.! i
+          xs'   = foldl' (\acc to -> (to,i):acc) xs edges
 
 
 -- Add an edge from vertex i to vertex j
@@ -48,3 +67,16 @@ numVertices (DGraph v) = V.length v
 -- The total number of edges in the graph.
 numEdges :: DGraph -> Int
 numEdges (DGraph v) = V.foldl' (\acc lst -> acc + length lst) 0 v
+
+
+-- Reverse the edges in the graph
+reverse :: DGraph -> DGraph
+reverse (DGraph v) = fromList numVertices $ reverseEdges v (numVertices-1) []
+    where numVertices = V.length v
+
+reverseEdges :: AdjList -> Int -> [(Int, Int)] -> [(Int, Int)]
+reverseEdges v (-1)  lst = lst
+reverseEdges v fr    lst = reverseEdges v (fr-1) lst'
+    where edges = v V.! fr
+          lst'  = foldl' (\acc to -> (to,fr):acc) lst edges
+

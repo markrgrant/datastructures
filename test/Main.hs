@@ -21,16 +21,17 @@ quickCheckResultW prop = do
 
 main :: IO ()
 main = do
-    result <- runErrorT (quickCheckResultW Graph.Test.prop_num_edges >>
-                         quickCheckResultW Graph.Test.prop_num_vertices >>
-                         quickCheckResultW Graph.Test.prop_add_edge >> 
-                         quickCheckResultW DGraph.Test.prop_num_edges >>
-                         quickCheckResultW DGraph.Test.prop_num_vertices >>
-                         quickCheckResultW DGraph.Test.prop_add_edge >> 
+    result <- runErrorT (quickCheckResultW Graph.Test.prop_num_edges      >>
+                         quickCheckResultW Graph.Test.prop_num_vertices   >>
+                         quickCheckResultW Graph.Test.prop_add_edge       >> 
+                         quickCheckResultW DGraph.Test.prop_num_edges     >>
+                         quickCheckResultW DGraph.Test.prop_num_vertices  >>
+                         quickCheckResultW DGraph.Test.prop_add_edge      >> 
+                         quickCheckResultW DGraph.Test.prop_reverse       >> 
                          quickCheckResultW RBTree.Test.prop_rbtree_insert >>
-                         quickCheckResultW PQ.Test.prop_pq_empty_size_0 >>
-                         quickCheckResultW PQ.Test.prop_pq_max >>
-                         quickCheckResultW PQ.Test.prop_pq_delmax >>
+                         quickCheckResultW PQ.Test.prop_pq_empty_size_0   >>
+                         quickCheckResultW PQ.Test.prop_pq_max            >>
+                         quickCheckResultW PQ.Test.prop_pq_delmax         >>
                          quickCheckResultW PQ.Test.prop_pq_insert)
     case result of
         Right _      -> exitSuccess

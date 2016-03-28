@@ -2,6 +2,7 @@ module DGraph.Test where
 
 import Test.QuickCheck
 import qualified DGraph as G
+import Data.List (sort)
 
 
 instance Arbitrary G.DGraph where
@@ -37,3 +38,12 @@ prop_add_edge :: Bool
 prop_add_edge = 9 `elem` G.adj g' 0 && 0 `notElem` G.adj g' 9
     where g = G.create 10
           g' = G.addEdge g 0 9
+
+
+-- The edge list of the reverse of a graph is the list of edges of the 
+-- graph whose edges have been reversed
+prop_reverse :: G.DGraph -> Bool
+prop_reverse g = gEdges1 == gEdges2
+    where gEdges1 = sort $ G.toList (G.reverse g)
+          gEdges2 = sort $ map (\(a,b) -> (b,a)) (G.toList g)
+
